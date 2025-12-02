@@ -51,10 +51,10 @@ public class PortRobertsPlugin extends Plugin
     private final List<NPC> Guards = new ArrayList<>();
 
     @Getter(AccessLevel.PACKAGE)
-    private GameObject CballStall;
+    private final List<GameObject> CballStall = new ArrayList<>();
 
     @Getter(AccessLevel.PACKAGE)
-    private GameObject OreStall;
+    private final List<GameObject> OreStall = new ArrayList<>();
 
     @Getter(AccessLevel.PACKAGE)
     private int currentTick = 0;
@@ -78,8 +78,8 @@ public class PortRobertsPlugin extends Plugin
         for (NPC npc : Guards) {
             npc.setOverheadText("");
         }
-        this.CballStall = null;
-        this.OreStall = null;
+        this.CballStall.clear();
+        this.OreStall.clear();
         this.Guards.clear();
         overlayManager.remove(portRobertsOverlay);
 	}
@@ -95,29 +95,35 @@ public class PortRobertsPlugin extends Plugin
     public void onNpcDespawned(NpcDespawned npcDespawned) {
         if (Guards.contains(npcDespawned.getNpc())) {
             npcDespawned.getNpc().setOverheadText("");
-            Guards.remove(npcDespawned.getNpc());
         }
+        Guards.remove(npcDespawned.getNpc());
     }
 
     @Subscribe
     public void onGameObjectSpawned(GameObjectSpawned gameObjectSpawned) {
         GameObject object = gameObjectSpawned.getGameObject();
         if (object.getId() == net.runelite.api.gameval.ObjectID.PORT_ROBERTS_MARKET_STALL_CBALL) {
-            this.CballStall = object;
+            this.CballStall.add(object);
         }
         if (object.getId() == net.runelite.api.gameval.ObjectID.PORT_ROBERTS_MARKET_STALL_ORE) {
-            this.OreStall = object;
+            this.OreStall.add(object);
         }
     }
 
     @Subscribe
     public void onGameObjectDespawned(GameObjectDespawned gameObjectDespawned) {
         GameObject object = gameObjectDespawned.getGameObject();
-        if (object.getId() == net.runelite.api.gameval.ObjectID.PORT_ROBERTS_MARKET_STALL_CBALL) {
-            this.CballStall = null;
-        }
-        if (object.getId() == net.runelite.api.gameval.ObjectID.PORT_ROBERTS_MARKET_STALL_ORE) {
-            this.OreStall = null;
+        this.CballStall.remove(object);
+        this.OreStall.remove(object);
+    }
+
+    @Subscribe
+    public void onWorldViewUnloaded(WorldViewUnloaded e)
+    {
+        if (e.getWorldView().isTopLevel())
+        {
+            this.CballStall.clear();
+            this.OreStall.clear();
         }
     }
 

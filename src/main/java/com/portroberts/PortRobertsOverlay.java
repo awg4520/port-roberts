@@ -1,5 +1,6 @@
 package com.portroberts;
 
+import net.runelite.api.GameObject;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -51,14 +52,19 @@ public class PortRobertsOverlay extends Overlay {
         }
 
 
-        Shape cbox = plugin.getOreStall().getClickbox();
-        if (cbox != null) {
-            OverlayUtil.renderPolygon(graphics, cbox, oreColor);
+        for (GameObject ore : plugin.getOreStall()) {
+            Shape cbox = ore.getClickbox();
+            if (cbox != null) {
+                OverlayUtil.renderPolygon(graphics, cbox, oreColor);
+            }
         }
-        cbox = plugin.getCballStall().getClickbox();
-        if (cbox != null) {
-            OverlayUtil.renderPolygon(graphics, cbox, cballColor);
+        for (GameObject cball : plugin.getCballStall()) {
+            Shape cbox = cball.getClickbox();
+            if (cbox != null) {
+                OverlayUtil.renderPolygon(graphics, cbox, cballColor);
+            }
         }
+
         return null;
     }
 }
